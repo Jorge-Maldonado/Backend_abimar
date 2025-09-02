@@ -1,23 +1,20 @@
-# Stage 1: Build the jar using Maven
-FROM maven:3.8.6-openjdk-11 AS build
+# Etapa de construcción
+FROM maven:3.8.5-openjdk-17-slim AS build
 WORKDIR /app
 
-# Copiar archivos de configuración y código fuente
-COPY pom.xml .
-COPY src ./src
-
-# Construir el proyecto (sin tests para acelerar)
+# Copiamos todo el proyecto y lo construimos
+COPY . .
 RUN mvn clean package -DskipTests
 
-# Stage 2: Ejecutar la app con OpenJDK
-FROM openjdk:11-jdk-slim
+# Etapa de ejecución
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 
-# Copiar el .jar generado en la etapa build
-COPY --from=build /app/target/spring-boot-sql-server-0.0.1-SNAPSHOT.jar ./spring-boot-sql-server.jar
+# Copiamos el JAR desde la etapa build
+COPY --from=build /app/target/*.jar ./app.jar
 
-# Exponer el puerto (cambia si tu app usa otro)
-EXPOSE 3000
+# Exponer el puerto (cámbialo si usas otro)
+EXPOSE 8080
 
-# Comando para arrancar la app
-CMD ["java", "-jar", "spring-boot-sql-server.jar"]
+# Comando para ejecutar la app
+CMD ["java", "-jar", "app.jar"]
