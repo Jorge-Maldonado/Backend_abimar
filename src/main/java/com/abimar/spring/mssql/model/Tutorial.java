@@ -1,4 +1,4 @@
-package com.bezkoder.spring.mssql.model;
+package com.abimar.spring.mssql.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

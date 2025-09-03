@@ -1,9 +1,9 @@
-package com.bezkoder.spring.mssql;
+package com.abimar.spring.mssql;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(classes = SpringBootSqlServerApplication.class)
 class SpringBootSqlServerApplicationTests {
 
 	@Test
