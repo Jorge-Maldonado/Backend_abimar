@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.abimar.spring.mssql.model.*;
 import com.abimar.spring.mssql.repository.*;
 
@@ -54,11 +54,28 @@ public class ApiController {
     ContactoRepository contactoRepository;
     @Autowired
     PostRepository postRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        Usuario usuario = usuarioRepository.findByEmailUser(request.getEmailUser())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
+            return ResponseEntity.ok("Login correcto");
+        } else {
+            return ResponseEntity.status(401).body("Contraseña incorrecta");
+        }
+    }
+
 
     // 1------------------ USUARIO -----------------------
     @PostMapping("/usuario/create")
     public ResponseEntity<Usuario> createUsuario(@RequestBody Usuario usuario) {
         try {
+            String hashedPassword = passwordEncoder.encode(usuario.getPassword());
+            usuario.setPassword(hashedPassword);
             Usuario _usuario = usuarioRepository.save(usuario);
             return new ResponseEntity<>(_usuario, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -125,7 +142,7 @@ public class ApiController {
 
     @PostMapping("/bitacora/update")
     public ResponseEntity<Bitacora> updateBitacora(@RequestBody Bitacora bitacora) {
-        Optional<Bitacora> bitacoraData = bitacoraRepository.findById( bitacora.getIdbitacora());
+        Optional<Bitacora> bitacoraData = bitacoraRepository.findById(bitacora.getIdbitacora());
         if (bitacoraData.isPresent()) {
             Bitacora _bitacora = bitacoraData.get();
             _bitacora.setAccion(bitacora.getAccion());
@@ -957,4 +974,118 @@ public class ApiController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+        // ------------------ USUARIO -----------------------
+    @PostMapping("/usuario/list")
+    public ResponseEntity<List<Usuario>> listUsuarios() {
+        return new ResponseEntity<>(usuarioRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ BITACORA -----------------------
+    @PostMapping("/bitacora/list")
+    public ResponseEntity<List<Bitacora>> listBitacoras() {
+        return new ResponseEntity<>(bitacoraRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ PERSONA -----------------------
+    @PostMapping("/persona/list")
+    public ResponseEntity<List<Persona>> listPersonas() {
+        return new ResponseEntity<>(personaRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ DIRECCION -----------------------
+    @PostMapping("/direccion/list")
+    public ResponseEntity<List<Direccion>> listDirecciones() {
+        return new ResponseEntity<>(direccionRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ TIPODOCUMENTO -----------------------
+    @PostMapping("/tipodocumento/list")
+    public ResponseEntity<List<TipoDocumento>> listTipoDocumentos() {
+        return new ResponseEntity<>(tipoDocumentoRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ ROL -----------------------
+    @PostMapping("/rol/list")
+    public ResponseEntity<List<Rol>> listRoles() {
+        return new ResponseEntity<>(rolRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ PERMISOS -----------------------
+    @PostMapping("/permisos/list")
+    public ResponseEntity<List<Permisos>> listPermisos() {
+        return new ResponseEntity<>(permisosRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ MODULO -----------------------
+    @PostMapping("/modulo/list")
+    public ResponseEntity<List<Modulo>> listModulos() {
+        return new ResponseEntity<>(moduloRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ PRODUCTO -----------------------
+    @PostMapping("/producto/list")
+    public ResponseEntity<List<Producto>> listProductos() {
+        return new ResponseEntity<>(productoRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ CATEGORIA -----------------------
+    @PostMapping("/categoria/list")
+    public ResponseEntity<List<Categoria>> listCategorias() {
+        return new ResponseEntity<>(categoriaRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ IMAGEN -----------------------
+    @PostMapping("/imagen/list")
+    public ResponseEntity<List<Imagen>> listImagenes() {
+        return new ResponseEntity<>(imagenRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ DETALLEPEDIDO -----------------------
+    @PostMapping("/detallepedido/list")
+    public ResponseEntity<List<DetallePedido>> listDetallePedidos() {
+        return new ResponseEntity<>(detallePedidoRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ DETALLETEMP -----------------------
+    @PostMapping("/detalletemp/list")
+    public ResponseEntity<List<DetalleTemp>> listDetalleTemps() {
+        return new ResponseEntity<>(detalleTempRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ PEDIDO -----------------------
+    @PostMapping("/pedido/list")
+    public ResponseEntity<List<Pedido>> listPedidos() {
+        return new ResponseEntity<>(pedidoRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ TIPOPAGO -----------------------
+    @PostMapping("/tipopago/list")
+    public ResponseEntity<List<TipoPago>> listTipoPagos() {
+        return new ResponseEntity<>(tipoPagoRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ REEMBOLSO -----------------------
+    @PostMapping("/reembolso/list")
+    public ResponseEntity<List<Reembolso>> listReembolsos() {
+        return new ResponseEntity<>(reembolsoRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ SUSCRIPCIONES -----------------------
+    @PostMapping("/suscripciones/list")
+    public ResponseEntity<List<Suscripciones>> listSuscripciones() {
+        return new ResponseEntity<>(suscripcionesRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ CONTACTO -----------------------
+    @PostMapping("/contacto/list")
+    public ResponseEntity<List<Contacto>> listContactos() {
+        return new ResponseEntity<>(contactoRepository.findAll(), HttpStatus.OK);
+    }
+
+    // ------------------ POST -----------------------
+    @PostMapping("/post/list")
+    public ResponseEntity<List<Post>> listPosts() {
+        return new ResponseEntity<>(postRepository.findAll(), HttpStatus.OK);
+    }
+
 }
