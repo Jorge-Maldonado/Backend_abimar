@@ -7,7 +7,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Etapa de ejecución
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # Copiamos el JAR desde la etapa build
