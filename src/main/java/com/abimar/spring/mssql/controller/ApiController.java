@@ -753,6 +753,18 @@ public class ApiController {
         }
     }
 
+    @PostMapping("/pedido/byPersonal")
+    public ResponseEntity<List<Pedido>> getPedidosByPersonal(@RequestParam Long personal) {
+
+        List<Pedido> pedidos = pedidoRepository.findByPersonal(personal);
+
+        if (pedidos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(pedidos, HttpStatus.OK);
+    }
+
     // 15------------------ TIPOPAGO -----------------------
     @PostMapping("/tipopago/create")
     public ResponseEntity<TipoPago> createTipoPago(@RequestBody TipoPago tipoPago) {
