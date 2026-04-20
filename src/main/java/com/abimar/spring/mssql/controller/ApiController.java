@@ -56,7 +56,7 @@ public class ApiController {
     PostRepository postRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Usuario usuario = usuarioRepository.findByEmailUser(request.getEmailUser())
@@ -68,7 +68,6 @@ public class ApiController {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
     }
-
 
     // 1------------------ USUARIO -----------------------
     @PostMapping("/usuario/create")
@@ -286,7 +285,8 @@ public class ApiController {
 
     @PostMapping("/tipodocumento/update")
     public ResponseEntity<TipoDocumento> updateTipoDocumento(@RequestBody TipoDocumento tipoDocumento) {
-        Optional<TipoDocumento> tipoDocumentoData = tipoDocumentoRepository.findById(tipoDocumento.getIdtipodocumento());
+        Optional<TipoDocumento> tipoDocumentoData = tipoDocumentoRepository
+                .findById(tipoDocumento.getIdtipodocumento());
         if (tipoDocumentoData.isPresent()) {
             TipoDocumento _tipoDocumento = tipoDocumentoData.get();
             _tipoDocumento.setIdtipodocumento(tipoDocumento.getIdtipodocumento());
@@ -611,6 +611,18 @@ public class ApiController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/detallepedido/byPedido")
+    public ResponseEntity<List<DetallePedido>> getDetallesByPedido(@RequestParam Long pedidoId) {
+
+        List<DetallePedido> detalles = detallePedidoRepository.findByPedidoId(pedidoId);
+
+        if (detalles.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(detalles, HttpStatus.OK);
     }
 
     @PostMapping("/detallepedido/update")
@@ -974,7 +986,8 @@ public class ApiController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-        // ------------------ USUARIO -----------------------
+
+    // ------------------ USUARIO -----------------------
     @PostMapping("/usuario/list")
     public ResponseEntity<List<Usuario>> listUsuarios() {
         return new ResponseEntity<>(usuarioRepository.findAll(), HttpStatus.OK);
@@ -1088,5 +1101,4 @@ public class ApiController {
         return new ResponseEntity<>(postRepository.findAll(), HttpStatus.OK);
     }
 
-    
 }
