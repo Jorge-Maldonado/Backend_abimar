@@ -63,7 +63,7 @@ public class ApiController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
-            return ResponseEntity.ok("Login correcto");
+            return ResponseEntity.ok("Login correcto, " + usuario.getPersonal());
         } else {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
