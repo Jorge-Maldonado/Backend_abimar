@@ -41,9 +41,29 @@ public class Producto {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "destacado", nullable = false)
+    private Boolean destacado = false;
+
+    @Column(name = "masvendido", nullable = false)
+    private Boolean masVendido = false;
+
     public Producto() {}
 
-    public Producto(Long idproducto, Long categoriaId, String codigo, String nombre, String descripcion, Double precio, Integer stock, String imagen, Date dateCreated, String ruta, Integer status) {
+    public Producto(
+            Long idproducto,
+            Long categoriaId,
+            String codigo,
+            String nombre,
+            String descripcion,
+            Double precio,
+            Integer stock,
+            String imagen,
+            Date dateCreated,
+            String ruta,
+            Integer status,
+            Boolean destacado,
+            Boolean masVendido) {
+
         this.idproducto = idproducto;
         this.categoriaId = categoriaId;
         this.codigo = codigo;
@@ -55,40 +75,113 @@ public class Producto {
         this.dateCreated = dateCreated;
         this.ruta = ruta;
         this.status = status;
+        this.destacado = destacado;
+        this.masVendido = masVendido;
     }
 
-    public Long getIdproducto() { return idproducto; }
-    public void setIdproducto(Long idproducto) { this.idproducto = idproducto; }
+    public Long getIdproducto() {
+        return idproducto;
+    }
 
-    public Long getCategoriaId() { return categoriaId; }
-    public void setCategoriaId(Long categoriaId) { this.categoriaId = categoriaId; }
+    public void setIdproducto(Long idproducto) {
+        this.idproducto = idproducto;
+    }
 
-    public String getCodigo() { return codigo; }
-    public void setCodigo(String codigo) { this.codigo = codigo; }
+    public Long getCategoriaId() {
+        return categoriaId;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setCategoriaId(Long categoriaId) {
+        this.categoriaId = categoriaId;
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public String getCodigo() {
+        return codigo;
+    }
 
-    public Double getPrecio() { return precio; }
-    public void setPrecio(Double precio) { this.precio = precio; }
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
 
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getImagen() { return imagen; }
-    public void setImagen(String imagen) { this.imagen = imagen; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public Date getDateCreated() { return dateCreated; }
-    public void setDateCreated(Date dateCreated) { this.dateCreated = dateCreated; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-    public String getRuta() { return ruta; }
-    public void setRuta(String ruta) { this.ruta = ruta; }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getRuta() {
+        return ruta;
+    }
+
+    public void setRuta(String ruta) {
+        this.ruta = ruta;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Boolean getDestacado() {
+        return destacado;
+    }
+
+    public void setDestacado(Boolean destacado) {
+        this.destacado = destacado;
+    }
+
+    public Boolean getMasVendido() {
+        return masVendido;
+    }
+
+    public void setMasVendido(Boolean masVendido) {
+        this.masVendido = masVendido;
+    }
 
     @Override
     public String toString() {
@@ -104,6 +197,8 @@ public class Producto {
                 ", dateCreated=" + dateCreated +
                 ", ruta='" + ruta + '\'' +
                 ", status=" + status +
+                ", destacado=" + destacado +
+                ", masVendido=" + masVendido +
                 '}';
     }
 }
