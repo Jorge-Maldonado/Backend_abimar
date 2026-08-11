@@ -17,7 +17,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // desactiva CSRF (para pruebas y peticiones desde Postman/Angular)
+                .cors() // aplica CorsConfigurationSource (CorsConfig)
+                .and()
+                .csrf().disable() // desactiva CSRF (para pruebas y peticiones desde Postman/Angular/APK)
                 .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll() // permite el acceso a todos los endpoints sin login
                 )

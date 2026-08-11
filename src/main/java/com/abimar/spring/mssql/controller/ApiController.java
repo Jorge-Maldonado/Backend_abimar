@@ -14,7 +14,25 @@ import com.abimar.spring.mssql.repository.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(
+    origins = {
+        "http://localhost:4200",
+        "http://localhost:8100",
+        "http://localhost",
+        "https://localhost",
+        "ionic://localhost",
+        "capacitor://localhost",
+        "https://jorge-maldonado.github.io"
+    },
+    allowedHeaders = "*",
+    methods = {
+        RequestMethod.GET,
+        RequestMethod.POST,
+        RequestMethod.PUT,
+        RequestMethod.DELETE,
+        RequestMethod.OPTIONS
+    }
+)
 public class ApiController {
 
     @Autowired
