@@ -146,9 +146,18 @@ public class ApiController {
             Usuario _usuario = usuarioData.get();
 
             _usuario.setEmailUser(usuario.getEmailUser());
-            _usuario.setPassword(usuario.getPassword());
             _usuario.setToken(usuario.getToken());
             _usuario.setPersonal(usuario.getPersonal());
+
+            String incomingPassword = usuario.getPassword();
+            if (incomingPassword != null && !incomingPassword.trim().isEmpty()) {
+                String trimmed = incomingPassword.trim();
+                if (isBcryptHash(trimmed)) {
+                    _usuario.setPassword(trimmed);
+                } else {
+                    _usuario.setPassword(passwordEncoder.encode(trimmed));
+                }
+            }
 
             usuarioRepository.save(_usuario);
 
@@ -158,6 +167,45 @@ public class ApiController {
         }
     }
 
+    @PostMapping("/usuario/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        final String genericError = "No se pudo verificar la identidad";
+
+        if (request == null
+                || isBlank(request.getEmailUser())
+                || isBlank(request.getDocumento())
+                || isBlank(request.getTelefono())
+                || isBlank(request.getNewPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(genericError);
+        }
+
+        String newPassword = request.getNewPassword().trim();
+        if (newPassword.length() < 6) {
+            return ResponseEntity.badRequest().body("La contraseña debe tener al menos 6 caracteres");
+        }
+
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmailUser(request.getEmailUser().trim());
+        if (!usuarioOpt.isPresent() || usuarioOpt.get().getPersonal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(genericError);
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        Optional<Persona> personaOpt = personaRepository.findById(usuario.getPersonal());
+        if (!personaOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(genericError);
+        }
+
+        Persona persona = personaOpt.get();
+        if (!documentoMatches(persona.getDocumento(), request.getDocumento())
+                || !telefonoMatches(persona.getTelefono(), request.getTelefono())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(genericError);
+        }
+
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(usuario);
+        return ResponseEntity.ok("Contraseña actualizada");
+    }
+
     @PostMapping("/usuario/delete")
     public ResponseEntity<HttpStatus> deleteUsuario(@RequestParam Long id) {
         try {
@@ -165,6 +213,38 @@ public class ApiController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private static boolean isBcryptHash(String value) {
+        return value != null
+                && value.length() >= 60
+                && (value.startsWith("$2a$") || value.startsWith("$2b$") || value.startsWith("$2y$"));
+    }
+
+    private static boolean documentoMatches(String stored, String incoming) {
+        if (stored == null || incoming == null) {
+            return false;
+        }
+        return stored.trim().equalsIgnoreCase(incoming.trim());
+    }
+
+    private static boolean telefonoMatches(Long stored, String incoming) {
+        if (stored == null || incoming == null) {
+            return false;
+        }
+        String digits = incoming.replaceAll("\\D", "");
+        if (digits.isEmpty()) {
+            return false;
+        }
+        try {
+            return stored.equals(Long.valueOf(digits));
+        } catch (NumberFormatException ex) {
+            return false;
         }
     }
 
